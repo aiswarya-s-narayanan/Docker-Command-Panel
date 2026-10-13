@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  docker-command-panel:
+    build: .
+    container_name: docker-command-panel
+    restart: unless-stopped
+    ports:
+      - "3030:3030"
+    volumes:
+      # Mount the host Docker socket so the panel can control host containers & images
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Mount SSL certs if present (optional)
+      - ./ssl:/app/ssl:ro
+

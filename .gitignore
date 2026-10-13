@@ -1,0 +1,31 @@
+# Dependency directories
+node_modules/
+
+# Environment files
+.env
+.env.local
+*.env
+
+# SSL / TLS certificates & private keys (CRITICAL: Do not commit secrets)
+ssl/
+*.pem
+*.key
+*.crt
+
+# Docker tar archives & images
+*.tar
+*.tar.gz
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+Readme.MD

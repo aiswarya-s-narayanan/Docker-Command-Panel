@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docker Command Panel</title>
+  <meta name="description" content="A beautiful Docker command control panel to manage containers and images with ease." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Animated background -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <div class="app-wrapper">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-brand">
+        <div class="docker-logo">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13.5 11H15V12.5H13.5V11ZM11 11H12.5V12.5H11V11ZM8.5 11H10V12.5H8.5V11ZM6 11H7.5V12.5H6V11ZM8.5 8.5H10V10H8.5V8.5ZM11 8.5H12.5V10H11V8.5ZM13.5 8.5H15V10H13.5V8.5ZM11 6H12.5V7.5H11V6Z" fill="currentColor"/>
+            <path d="M22.8 11.3c-.5-.4-1.6-.5-2.4-.3-.1-.8-.6-1.6-1.3-2.1l-.3-.2-.2.3c-.4.6-.5 1.6-.2 2.4-.3.1-.6.3-.9.4-.5.2-1 .2-1.5.2H2.1c-.1 1.1.1 2.2.6 3.2.5 1 1.2 1.7 2.1 2.1 1 .5 2.2.7 3.3.7.6 0 1.2-.1 1.8-.2.8-.2 1.5-.6 2.2-1.1.5.4 1.2.6 1.9.6.5 0 1-.1 1.4-.4.1.3.3.6.5.8l.2.2.2-.2c.5-.5.7-1.2.7-1.9 0-.4-.1-.8-.3-1.1.7-.1 1.4-.3 1.8-.8.4-.4.5-1 .4-1.7l-.1-.4-.1.2z" fill="currentColor" opacity="0.6"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header-title">Docker Command Panel</h1>
+          <p class="header-subtitle">Manage containers &amp; images with ease</p>
+        </div>
+      </div>
+      <button class="refresh-btn" id="refreshBtn" title="Refresh">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="23 4 23 10 17 10"/>
+          <polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+        </svg>
+        Refresh
+      </button>
+    </header>
+
+    <!-- Command Panel -->
+    <section class="command-card glass-card">
+      <div class="section-label">Execute Command</div>
+      <div class="command-grid">
+
+        <!-- Command Selector -->
+        <div class="field-group">
+          <label class="field-label" for="commandSelect">Docker Command</label>
+          <div class="select-wrapper">
+            <select id="commandSelect">
+              <option value="">— Select a Command —</option>
+              <option value="remove">🗑️  Remove (Container + Image)</option>
+              <option value="remove-container">📦  Remove Container Only</option>
+              <option value="remove-image">🖼️  Remove Image Only</option>
+              <option value="start">▶️  Start Container</option>
+              <option value="stop">⏹️  Stop Container</option>
+              <option value="restart">🔄  Restart Container</option>
+              <option value="logs">📜  Logs</option>
+              <option value="pull">⬇️  Pull Image</option>
+              <option value="build">🔨  Build Image</option>
+            </select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+
+        <!-- Target Selector (containers) -->
+        <div class="field-group" id="containerField">
+          <label class="field-label" for="containerSelect">Target Container</label>
+          <div class="select-wrapper">
+            <select id="containerSelect">
+              <option value="">Loading containers…</option>
+            </select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+
+        <!-- Image selector (for remove / pull / build) -->
+        <div class="field-group hidden" id="imageField">
+          <label class="field-label" for="imageSelect">Target Image</label>
+          <div class="select-wrapper">
+            <select id="imageSelect">
+              <option value="">Loading images…</option>
+            </select>
+            <span class="select-arrow">▾</span>
+          </div>
+        </div>
+
+        <!-- Pull / build input -->
+        <div class="field-group hidden" id="manualImageField">
+          <label class="field-label" for="manualImageInput" id="manualImageLabel">Image Name (e.g. nginx:latest)</label>
+          <input type="text" id="manualImageInput" class="text-input" placeholder="e.g. nginx:latest" />
+        </div>
+
+        <!-- Build context path -->
+        <div class="field-group hidden" id="buildContextField">
+          <label class="field-label" for="buildContextInput">Build Context Path</label>
+          <input type="text" id="buildContextInput" class="text-input" placeholder="e.g. /home/user/myproject" />
+        </div>
+
+      </div>
+
+      <div class="command-footer">
+        <div class="command-preview" id="commandPreview">Select a command to begin…</div>
+        <button class="execute-btn" id="executeBtn" disabled>
+          <span class="btn-icon">⚡</span>
+          Execute
+        </button>
+      </div>
+    </section>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay hidden" id="modalOverlay">
+      <div class="modal glass-card">
+        <div class="modal-icon" id="modalIcon">⚠️</div>
+        <h2 class="modal-title" id="modalTitle">Confirm Action</h2>
+        <p class="modal-body" id="modalBody">Are you sure?</p>
+        <div class="modal-actions">
+          <button class="btn-cancel" id="cancelBtn">Cancel</button>
+          <button class="btn-confirm" id="confirmBtn">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Output Terminal -->
+    <section class="terminal-card glass-card" id="terminalSection">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <span class="terminal-title" id="terminalTitle">Output</span>
+        <button class="clear-btn" id="clearBtn">Clear</button>
+      </div>
+      <div class="terminal-body" id="terminalBody">
+        <div class="terminal-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <polyline points="4 17 10 11 4 5"/>
+            <line x1="12" y1="19" x2="20" y2="19"/>
+          </svg>
+          <p>Command output will appear here</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resources Grid -->
+    <div class="resources-grid">
+      <!-- Containers Table -->
+      <section class="resource-card glass-card">
+        <div class="resource-header">
+          <div class="resource-title">
+            <span class="resource-icon">📦</span>
+            Containers
+          </div>
+          <span class="badge" id="containerBadge">0</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table" id="containerTable">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Image</th>
+                <th>Status</th>
+                <th>Quick Action</th>
+              </tr>
+            </thead>
+            <tbody id="containerTableBody">
+              <tr><td colspan="4" class="empty-cell">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Images Table -->
+      <section class="resource-card glass-card">
+        <div class="resource-header">
+          <div class="resource-title">
+            <span class="resource-icon">🖼️</span>
+            Images
+          </div>
+          <span class="badge" id="imageBadge">0</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table" id="imageTable">
+            <thead>
+              <tr>
+                <th>Repository</th>
+                <th>Tag</th>
+                <th>Size</th>
+                <th>Created</th>
+              </tr>
+            </thead>
+            <tbody id="imageTableBody">
+              <tr><td colspan="4" class="empty-cell">Loading…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">Docker Command Panel &mdash; running on Node.js + Express</footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
